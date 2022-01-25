@@ -83,7 +83,7 @@ def main():
 
     # Solver
     # Create the mip solver with the SCIP backend.
-    solver = pywraplp.Solver.CreateSolver('GUROBI')
+    solver = pywraplp.Solver.CreateSolver('CBC')
 
 
     # Variables
