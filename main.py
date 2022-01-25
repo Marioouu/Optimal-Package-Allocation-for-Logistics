@@ -5,7 +5,8 @@ from matplotlib.pyplot import cm
 import numpy as np
 import random 
 from vrp import *
-
+from visualizer import *
+from generator import *
 from scipy.spatial.distance import cdist
 from sklearn.metrics import pairwise_distances, pairwise
 
@@ -18,64 +19,18 @@ def initialize_cost(depot_locations, drop_locations):
             cost[depot][drop] = geodesic(depot_locations[depot], drop_locations[drop]).km    
     return cost
 
-def plotter(depot_locations, drop_locations, solver):
-    x_depot = []
-    y_depot = []
-    x_drop = []
-    y_drop = []
-
-    for depot in depot_locations:
-        x_depot.append(depot[0])
-        y_depot.append(depot[1])
-    for drop in drop_locations:
-        x_drop.append(drop[0])
-        y_drop.append(drop[1])   
-
-    
-    plt.scatter(x=x_depot, y=y_depot, color='r', s=100)
-    plt.scatter(x=x_drop, y=y_drop, color='b')
-    
-def generate_locs_two_region(num_rows):
-    lat = [18.627160, 18.621160]
-    lon = [73.810552, 73.860552]
-
-    result = []
-
-    for _ in range(num_rows):
-        dec_lat = random.random()/100
-        dec_lon = random.random()/100
-        result.append((random.choice(lat) + dec_lat, random.choice(lon) + dec_lon))
-    return result
-
-def generate_locs(num_rows):
-    lat = (18.627160 + 18.621160)/2
-    lon = (73.810552 + 73.860552) / 2
-
-    result = []
-
-    for _ in range(num_rows):
-        dec_lat = random.random()/100
-        dec_lon = random.random()/100
-        result.append((lat + dec_lat, lon + dec_lon))
-    return result
-
 def main():
 
-    # drop_locations = [(18.627160, 73.810552), (18.626184, 73.806679), (18.622280, 73.804791), (18.640173, 73.818695), (18.667335, 73.745911), (18.679369, 73.765137), (18.650257, 73.731491)]
-    # depot_locations = [(18.647330, 73.793118), (18.581230, 73.841290)]
-    drop_locations = generate_locs(800)
+    drop_locations = generate_locs(400)
     depot_locations = generate_locs(10)
     num_depots = len(depot_locations)
     num_drops = len(drop_locations)
+
     # Maximum total of drop sizes for any depot
-    depot_capacity = np.random.randint(100, size=(num_depots))
+    depot_capacity = np.random.randint(120, size=(num_depots))
     # depot_capacity = [2000, 2000, 2000, 3000, 3000]
-    # depot_capacity = [2000]
     total_capacity = sum(depot_capacity)
-    # plotter(depot_locations, drop_locations)
     costs = initialize_cost(depot_locations, drop_locations)
-    # print(costs)
-    
 
     print(num_depots)
     print(num_drops)
@@ -84,7 +39,6 @@ def main():
     # Solver
     # Create the mip solver with the SCIP backend.
     solver = pywraplp.Solver.CreateSolver('CBC')
-
 
     # Variables
     # x[i, j] is an array of 0-1 variables, which will be 1
@@ -152,14 +106,20 @@ def main():
                         c = random.choice(color)
                         d[depot] = c
 
-                    # plt.plt([depot_locations[depot][0], drop_locations[drop][0]], [depot_locations[depot][1], drop_locations[drop][1]], c = c)
+                    
+                    #-----------To visualize the drops allocated to the depots (Comment if visualizing routes)-------------#
+
+                    # plt.plot([depot_locations[depot][0], drop_locations[drop][0]], [depot_locations[depot][1], drop_locations[drop][1]], c = c)
+                    
                     print(f'depot {depot} assigned to drop {drop}.' +
                           f' Cost: {costs[depot][drop]}')
+
             if depot in nodes:
                 vrpData = [depot_locations[depot]]
                 for depo_node in nodes[depot]:
                     vrpData.append(drop_locations[depo_node])
                 vrp_calculator(vrpData)
+
         plt.show()
     else:
         print('No solution found.')

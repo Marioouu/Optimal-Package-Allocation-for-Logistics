@@ -28,7 +28,7 @@ def create_data_model(vrpData):
     # data['distance_matrix'] = pairwise_distances(vrpData, vrpData, getDistance)
 
     vrpData = [[math.radians(_[0]), math.radians(_[1])] for _ in vrpData]
-    data['distance_matrix']= np.ceil(pairwise.haversine_distances(vrpData) * 637100)
+    data['distance_matrix'] = np.ceil(pairwise.haversine_distances(vrpData) * 637100)
 
     print("Calculated distance matrix!")
     
