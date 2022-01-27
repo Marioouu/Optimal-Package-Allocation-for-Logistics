@@ -1,6 +1,5 @@
 from generator import *
 from optimization import * 
-import greedy3 as g3
 import greedy1 as g1
 import matplotlib.pyplot as plt
 from visualizer import *

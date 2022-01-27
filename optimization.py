@@ -33,6 +33,7 @@ def optimization(depot_locations, drop_locations, depot_capacity, calculate_vrp)
 
     # Solver
     # Create the mip solver with the CBC backend.
+    # Set to GUROBI for faster and more optimized results (Requires license)
     solver = pywraplp.Solver.CreateSolver('CBC')
 
     # Variables
@@ -83,7 +84,7 @@ def optimization(depot_locations, drop_locations, depot_capacity, calculate_vrp)
         nodes={}
 
         #--------PLOTS ALLOCATIONS--------------#
-        
+
         optimization_plotter(depot_locations, drop_locations, x)
         if(calculate_vrp):
             plt.figure()
