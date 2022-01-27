@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
+from matplotlib.pyplot import cm
+import numpy as np
+import random
 
-def plotter(depot_locations, drop_locations, solver):
+def plotter(depot_locations, drop_locations):
     x_depot = []
     y_depot = []
     x_drop = []
@@ -14,5 +17,21 @@ def plotter(depot_locations, drop_locations, solver):
         y_drop.append(drop[1])   
 
     
-    plt.scatter(x=x_depot, y=y_depot, color='r', s=100)
-    plt.scatter(x=x_drop, y=y_drop, color='b')
+    plt.scatter(x=x_depot, y=y_depot, color='r', s=100, zorder=2, label='Service Centers')
+    plt.scatter(x=x_drop, y=y_drop, color='b', zorder=0, alpha = 0.7, label='Drops')
+    plt.legend()
+
+def optimization_plotter(depot_locations, drop_locations, x):
+    d={}
+    color = cm.Dark2(np.linspace(0, 1, 100))
+
+    for depot in range(len(depot_locations)):
+        for drop in range(len(drop_locations)):
+
+            if x[depot, drop].solution_value() > 0.5:
+                if depot in d:
+                        c = d[depot]
+                else:
+                    c = random.choice(color)
+                    d[depot] = c
+                plt.plot([depot_locations[depot][0], drop_locations[drop][0]], [depot_locations[depot][1], drop_locations[drop][1]], c = c, alpha=0.7, zorder=1)

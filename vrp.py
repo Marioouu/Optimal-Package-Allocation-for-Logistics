@@ -17,23 +17,13 @@ def create_data_model(vrpData):
     """Stores the data for the problem."""
     data = {}
     data['distance_matrix'] = []
-
-    # for i in vrpData:
-    #     dm = []
-    #     for j in vrpData:
-    #         dm.append(math.ceil(geodesic(i, j).km * 100))
-    #     data['distance_matrix'].append(dm)
-
-    # data['distance_matrix'] = cdist(vrpData, vrpData, getDistance)
-    # data['distance_matrix'] = pairwise_distances(vrpData, vrpData, getDistance)
-
     vrpData = [[math.radians(_[0]), math.radians(_[1])] for _ in vrpData]
     data['distance_matrix'] = np.ceil(pairwise.haversine_distances(vrpData) * 637100)
 
     print("Calculated distance matrix!")
     
     num_drops = len(vrpData) - 1
-    num_vehicles = math.ceil(num_drops / 5)
+    num_vehicles = math.ceil(num_drops / 10)
     
     if num_vehicles == 0:
         num_vehicles = 1
@@ -69,7 +59,6 @@ def print_solution(data, manager, routing, solution, vrpData):
             y_d.append(vrpData[node_index][1])
 
             route_load += data['demands'][node_index]
-            # plan_output += ' {0} Load({1}) -> '.format(node_index, route_load)
             previous_index = index
             index = solution.Value(routing.NextVar(index))
             route_distance += routing.GetArcCostForVehicle(
@@ -77,11 +66,6 @@ def print_solution(data, manager, routing, solution, vrpData):
         x_d.append(x_d[0])
         y_d.append(y_d[0])
         plt.plot(x_d, y_d)
-        # plan_output += ' {0} Load({1})\n'.format(manager.IndexToNode(index),
-        #                                          route_load)
-        # plan_output += 'Distance of the route: {}m\n'.format(route_distance)
-        # plan_output += 'Load of the route: {}\n'.format(route_load)
-        # print(plan_output)
         total_distance += route_distance
         total_load += route_load
     print('Total distance of all routes: {}m'.format(total_distance))
@@ -130,7 +114,7 @@ def vrp_calculator(vrpData):
         data['vehicle_capacities'],  # vehicle maximum capacities
         True,  # start cumul to zero
         'Capacity')
-    penalty = 100
+    penalty = 1000
     for node in range(1, len(data['distance_matrix'])):
         routing.AddDisjunction([manager.NodeToIndex(node)], penalty)
 
@@ -142,7 +126,7 @@ def vrp_calculator(vrpData):
         # routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH)
         # routing_enums_pb2.LocalSearchMetaheuristic.AUTOMATIC)
         routing_enums_pb2.LocalSearchMetaheuristic.SIMULATED_ANNEALING)
-    search_parameters.time_limit.FromSeconds(5)
+    search_parameters.time_limit.FromSeconds(60 * 2)
     # search_parameters.time_limit.seconds = 5
 
     # Solve the problem.
