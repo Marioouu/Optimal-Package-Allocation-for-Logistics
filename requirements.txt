@@ -1,8 +1,7 @@
 geopy==2.2.0
 matplotlib==3.4.2
-matplotlib-inline @ file:///home/conda/feedstock_root/build_artifacts/matplotlib-inline_1618935594181/work
 numpy==1.20.3
 ortools==9.2.9972
 pandas==1.2.4
 scikit-learn==1.0.1
-scipy @ file:///C:/bld/scipy_1619562066759/work
+scipy 
